@@ -10,5 +10,5 @@ const fruitInfoSchema = new mongoose.Schema({
     fat: Number
 })
 
-const FruitInfo = mongoose.model("fruitInfo", fruitInfoSchema)
+const FruitInfo = mongoose.model("FruitInfo", fruitInfoSchema)
 module.exports = FruitInfo

@@ -18,5 +18,5 @@ const todoSchema = new mongoose.Schema({
     tags: [String],
 }, { timestamps: true })
 
-const Todo = mongoose.model("todo", todoSchema)
+const Todo = mongoose.model("Todo", todoSchema)
 module.exports = Todo

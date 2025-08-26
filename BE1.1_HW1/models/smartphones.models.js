@@ -25,5 +25,5 @@ const smartphoneSchema = new mongoose.Schema({
     features: [String],
 }, { timestamps: true })
 
-const Smartphone = mongoose.model("smartphone", smartphoneSchema)
+const Smartphone = mongoose.model("Smartphone", smartphoneSchema)
 module.exports = Smartphone

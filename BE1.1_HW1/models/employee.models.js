@@ -11,5 +11,5 @@ const employeeCardSchema = new mongoose.Schema({
     address: String
 })
 
-const EmployeeCard = mongoose.model("employeeCard", employeeCardSchema)
+const EmployeeCard = mongoose.model("EmployeeCard", employeeCardSchema)
 module.exports = EmployeeCard

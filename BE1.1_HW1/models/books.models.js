@@ -35,5 +35,5 @@ const bookSchema = new mongoose.Schema({
     coverImageUrl: String,
 }, { timestamps: true })
 
-const Book = mongoose.model("book", bookSchema)
+const Book = mongoose.model("Book", bookSchema)
 module.exports = Book

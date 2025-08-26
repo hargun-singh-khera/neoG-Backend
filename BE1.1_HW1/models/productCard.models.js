@@ -13,5 +13,5 @@ const productCardSchema = new mongoose.Schema({
     isFreeDelivery: Boolean,
 })
 
-const ProductCard = mongoose.model("productCard", productCardSchema)
+const ProductCard = mongoose.model("ProductCard", productCardSchema)
 module.exports = ProductCard

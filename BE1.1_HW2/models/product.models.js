@@ -1,14 +1,17 @@
 const mongoose = require("mongoose")
 
 const productCardSchema = new mongoose.Schema({
-    productImage: String,
+    productId: String,
+    productImageUrl: String,
     productName: String,
-    productCategory: String,
-    productInfo: String,
-    colors: [String],
-    sizes: [String],
+    ratingsCount: Number,
+    reviewsCount: Number,
+    avgRating: Number,
     price: Number,
-    isNewArrival: Boolean,
+    discount: Number,
+    offers: [String],
+    vairant: [String],
+    isWifiConnectivity: Boolean,
 })
 
 const ProductCard = mongoose.model("ProductCard", productCardSchema)

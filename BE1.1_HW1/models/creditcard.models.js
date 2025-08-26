@@ -6,5 +6,5 @@ const creditCardSchema = new mongoose.Schema({
     expiryDate: String,
 })
 
-const CreditCard = mongoose.model("creditCard", creditCardSchema)
+const CreditCard = mongoose.model("CreditCard", creditCardSchema)
 module.exports = CreditCard
