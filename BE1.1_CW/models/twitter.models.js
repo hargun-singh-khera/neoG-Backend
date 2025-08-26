@@ -14,6 +14,6 @@ const twitterSchema = new mongoose.Schema({
     isOnline: Boolean,
 })
 
-const Twitter =  mongoose.model("Twitter", twitterSchema)
+const Profile =  mongoose.model("Profile", twitterSchema)
 
-module.exports = Twitter
+module.exports = Profile
