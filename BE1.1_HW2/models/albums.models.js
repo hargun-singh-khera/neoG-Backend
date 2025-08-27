@@ -9,10 +9,10 @@ const musicAlbumSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    genre: [{
+    genre: {
         type: String,
         enum: [ 'Rock', 'Pop', 'Hip-Hop', 'Jazz', 'Classical', 'Country', 'Electronic', 'R&B', 'Reggae', 'Indie']
-    }],
+    },
     releaseYear: Number,
     recordLabel: String,
     format: String,
