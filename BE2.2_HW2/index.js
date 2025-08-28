@@ -138,3 +138,66 @@ async function readHotelByNumber(phoneNumber) {
 }
 readHotelByNumber("+1299655890")
 
+
+async function updateHotelCheckOutTime(hotelId, dataToUpdate) {
+    try {
+        const updatedHotel = await Hotel.findByIdAndUpdate(hotelId, dataToUpdate, {new: true}) 
+        console.log(updatedHotel)       
+    } catch (error) {
+        throw error
+    }
+}
+
+updateHotelCheckOutTime("68afdf6f6d52311ea0ca13f6", {checkOutTime: "11:00 AM"})
+
+async function updateHotelRating(hotelName, dataToUdpate) {
+    try {
+        const updatedHotel = await Hotel.findOneAndUpdate(
+            {name: hotelName},
+            dataToUdpate,
+            {new: true}
+        )
+        console.log(updatedHotel)
+    } catch (error) {
+        throw error
+    }
+}
+
+updateHotelRating("Sunset Resort", {rating: 4.2})
+
+async function updateHotelPhoneNumber(phoneNumber, dataToUpdate) {
+    try {
+        const updatedHotel = await Hotel.findOneAndUpdate(
+            {phoneNumber},
+            dataToUpdate,
+            {new: true}
+        )
+        console.log(updatedHotel)  
+    } catch (error) {
+        throw error
+    }
+}
+
+updateHotelPhoneNumber("+1299655890", {phoneNumber: "+1997687392"})
+
+async function deleteHotelById(hotelId) {
+    try {
+        const deletedHotel = await Hotel.findByIdAndDelete(hotelId)
+        console.log("Deleted hotel: ", deletedHotel)        
+    } catch (error) {
+        throw error
+    }
+}
+
+deleteHotelById("68afdf6f6d52311ea0ca13f6")
+
+async function deleteHotelByPhoneNumber(hotelPhoneNumber) {
+    try {
+        const deletedHotel = await Hotel.findOneAndDelete({phoneNumber: hotelPhoneNumber})
+        console.log("Deleted hotel by phone number: ", deletedHotel)
+    } catch (error) {
+        throw error
+    }
+}
+
+deleteHotelByPhoneNumber("+1234567890")

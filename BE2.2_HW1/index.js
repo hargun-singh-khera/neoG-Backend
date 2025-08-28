@@ -101,3 +101,68 @@ async function readAllResturantsByCuisine(cuisine) {
 }
 
 readAllResturantsByCuisine("Italian")
+
+async function updateResturantRating(resturantId, dataToUpdate) {
+    try {
+        const updatedResturant = await Resturant.findByIdAndUpdate(resturantId, dataToUpdate, {new: true})
+        console.log(updatedResturant)        
+    } catch (error) {
+        throw error
+    }
+}
+
+updateResturantRating("68afe031133758901d82df07", {rating: 4.1})
+
+async function updateResturantName(resturantName, dataToUpdate) {
+    try {
+        const updatedResturant = await Resturant.findOneAndUpdate(
+            {name: resturantName},
+            dataToUpdate,
+            {new: true}
+        )
+        console.log(updatedResturant)
+    } catch (error) {
+        throw error
+    }
+}
+
+updateResturantName("Somi", {name: "Som Sarovar"})
+
+async function updateResturantDeliveryStatus(phoneNumber, dataToUpdate) {
+    try {
+        const updatedResturant = await Resturant.findOneAndUpdate(
+            {phoneNumber},
+            dataToUpdate,
+            {new: true}
+        )        
+        console.log(updatedResturant)
+    } catch (error) {
+        throw error
+    }
+}
+
+updateResturantDeliveryStatus("+1288997392", {isDeliveryAvailable: true})
+
+
+async function deleteResturantById(resturantId) {
+    try {
+        const deletedResturant = await Resturant.findByIdAndDelete(resturantId)
+        console.log("Deleted resturant: ", deletedResturant)        
+    } catch (error) {
+        throw error
+    }
+}
+
+deleteResturantById("68afe00e3dbe49d5176e3b4d")
+
+
+async function deleteResturantByName(resturantName) {
+    try {
+        const deletedResturant = await Resturant.findOneAndDelete({name: resturantName})
+        console.log("Deleted resturant by name: ", deletedResturant)
+    } catch (error) {
+        throw error
+    }
+}
+
+deleteResturantByName("Yo China")

@@ -63,4 +63,55 @@ async function findMovieByDirector(directorName) {
     }
 }
 
-findMovieByDirector("Kabir Khan")
+// findMovieByDirector("Kabir Khan")
+
+
+// find a movie by id and update its rating
+async function updateMovie(movieId, dataToUpdate) {
+    try {
+        const updatedMovie = await Movie.findByIdAndUpdate(movieId, dataToUpdate, {new: true})
+        console.log(updatedMovie)
+    } catch (error) {
+        console.log("Error in updating movie rating", error)
+    }
+}
+
+// updateMovie("68afddb279d81bb18a3f2b84", {rating: 8.0})
+
+
+async function updateMovieDetail(movieTitle, dataToUpdate) {
+    try {
+        const updatedMovie = await Movie.findOneAndUpdate(
+            {title: movieTitle},
+            dataToUpdate,
+            {new: true}
+        )
+        console.log(updatedMovie)
+    } catch (error) {
+        console.log("Error in changing data", error)
+    }
+}
+
+// updateMovieDetail("Kabhi Khushi Kabhie Gham", {releaseYear: 2001})
+
+// find a movie by id and delete from the database
+async function deleteMovie(movieId) {
+    try {
+        const deletedMovie = await Movie.findByIdAndDelete(movieId)
+    } catch (error) {
+        console.log("Error in deleting movie", error)
+    }
+}
+
+// deleteMovie("68aece734d43111463412943")
+
+async function deleteMoveByTitle(movieTitle) {
+    try {
+        const deletedMovie = await Movie.findOneAndDelete({title: movieTitle})
+        console.log("Deleted movie: ",deletedMovie)
+    } catch (error) {
+        console.log("Error in movie deletion", error)
+    }
+}
+
+deleteMoveByTitle("3 Idiots")
