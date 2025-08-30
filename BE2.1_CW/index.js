@@ -27,7 +27,7 @@ async function createMovie(newMovie) {
     }
 }
 
-// createMovie(newMovie)
+createMovie(newMovie)
 
 // find a movie with a particular title
 async function readMovieByTitle(movieTitle) {
@@ -39,7 +39,7 @@ async function readMovieByTitle(movieTitle) {
     }
 }
 
-// readMovieByTitle("Dilwale Dulhania Le Jayenge")
+readMovieByTitle("Dilwale Dulhania Le Jayenge")
 
 // find all the movies in the database
 async function findAllMovies() {
@@ -51,7 +51,7 @@ async function findAllMovies() {
     }
 }
 
-// findAllMovies()
+findAllMovies()
 
 // find movie by director
 async function findMovieByDirector(directorName) {
@@ -63,7 +63,7 @@ async function findMovieByDirector(directorName) {
     }
 }
 
-// findMovieByDirector("Kabir Khan")
+findMovieByDirector("Kabir Khan")
 
 
 // find a movie by id and update its rating
@@ -76,7 +76,7 @@ async function updateMovie(movieId, dataToUpdate) {
     }
 }
 
-// updateMovie("68afddb279d81bb18a3f2b84", {rating: 8.0})
+updateMovie("68afddb279d81bb18a3f2b84", {rating: 8.0})
 
 
 async function updateMovieDetail(movieTitle, dataToUpdate) {
@@ -92,7 +92,7 @@ async function updateMovieDetail(movieTitle, dataToUpdate) {
     }
 }
 
-// updateMovieDetail("Kabhi Khushi Kabhie Gham", {releaseYear: 2001})
+updateMovieDetail("Kabhi Khushi Kabhie Gham", {releaseYear: 2001})
 
 // find a movie by id and delete from the database
 async function deleteMovie(movieId) {
@@ -103,7 +103,7 @@ async function deleteMovie(movieId) {
     }
 }
 
-// deleteMovie("68aece734d43111463412943")
+deleteMovie("68aece734d43111463412943")
 
 async function deleteMoveByTitle(movieTitle) {
     try {
