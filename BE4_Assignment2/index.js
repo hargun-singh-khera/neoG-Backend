@@ -9,6 +9,10 @@ app.use(express.json())
 
 const port = process.env.PORT || 8000
 
+app.get("/", (req, res) => {
+    res.send("My Express App : BE4_Assignment2")
+})
+
 async function createRecipeData(recipeData) {
     try {
         const newRecipe = new Recipe(recipeData)   
