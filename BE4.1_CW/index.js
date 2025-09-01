@@ -145,6 +145,32 @@ app.delete("/movies/:movieId", async (req, res) => {
     }
 })
 
+
+// BE4.4_CW
+
+async function updateMovie(movieId, dataToUpdate) {
+    try {
+        const updatedMovie = await Movie.findByIdAndUpdate(movieId, dataToUpdate, {new: true})
+        return updatedMovie
+    } catch (error) {
+        console.log("Error in updating movie rating", error)
+    }
+}
+
+app.post("/movies/:movieId", async (req, res) => {
+    try {
+        const updatedMovie = await updateMovie(req.params.movieId, req.body)
+        if(updatedMovie) {
+            res.status(200).json({message: "Movie updated successfully", movie: updatedMovie})
+        }
+        else {
+            res.status(404).json({error: "Movie not found."})
+        }
+    } catch (error) {
+        res.status(500).json({error: "Failed to update movie."})
+    }
+})
+
 app.listen(port, () => {
     console.log("Server is running at port:", port)
 })

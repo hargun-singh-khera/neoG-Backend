@@ -169,6 +169,35 @@ app.delete("/restaurants/:restaurantId", async (req, res) => {
     }
 })
 
+// BE4.4_HW2
+
+async function updateRestaurantCuisine(restaurantId, dataToUpdate) {
+    try {
+        const updatedRestaurant = await Resturant.findByIdAndUpdate(
+            restaurantId, 
+            dataToUpdate, 
+            {new: true}
+        )    
+        return updatedRestaurant    
+    } catch (error) {
+        throw error
+    }
+}
+
+app.post("/restaurants/cuisine/:restaurantId", async (req, res) => {
+    try {
+        const updatedRestaurant = await updateRestaurantCuisine(req.params.restaurantId, req.body)
+        if(updatedRestaurant) {
+            res.status(200).json({message: "Cuisine updated successfully", restuarant: updatedRestaurant})
+        }
+        else {
+            res.status(404).json({error: "No restaurant found."})
+        }
+    } catch (error) {
+        res.status(500).json({error: "Failed to update cuisine."})
+    }
+})
+
 app.listen(port, () => {
     console.log("Server is running at port:", port)
 })

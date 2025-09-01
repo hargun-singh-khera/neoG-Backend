@@ -162,6 +162,35 @@ app.delete("/hotels/:hotelId", async (req, res) => {
         res.status(500).json({error: "Failed to delete hotel."})
     }
 })
+
+
+// BE4.4_HW2
+async function updateHotel(hotelId, dataToUpdate) {
+    try {
+        const updatedHotel = await Hotel.findByIdAndUpdate(
+            hotelId,
+            dataToUpdate,
+            {new: true}
+        )
+        return updatedHotel        
+    } catch (error) {
+        throw error
+    }
+}
+
+app.post("/hotels/rating/:hotelId", async (req, res) => {
+    try {
+        const updatedHotel = await updateHotel(req.params.hotelId, req.body)
+        if(updatedHotel) {
+            res.status(200).json({message: "Hotel rating updatd successfully", hotel: updatedHotel})
+        }
+        else {
+            res.status(404).json({error: "Hotel not found."})
+        }
+    } catch (error) {
+        res.status(500).json({error: "Failed to update hotel rating."})
+    }
+})
  
 app.listen(port, () => {
     console.log("Server is running at port:", port)
