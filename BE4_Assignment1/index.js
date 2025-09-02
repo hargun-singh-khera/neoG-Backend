@@ -37,7 +37,6 @@ app.post("/books", async (req, res) => {
         const newBook = await createBookData(req.body)
         res.status(201).json({message: "Book added successfully", book: newBook})
     } catch (error) {
-        console.log(error)
         res.status(500).json({error: "Failed to create a new book."})
     }
 })
