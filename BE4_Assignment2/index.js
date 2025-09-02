@@ -51,7 +51,7 @@ app.get("/recipes", async (req, res) => {
 
 async function readRecipesByTitle(recipeTitle) {
     try {
-       const recipes = await Recipe.find({title: recipeTitle})
+       const recipes = await Recipe.findOne({title: recipeTitle})
        return recipes 
     } catch (error) {
         throw error
