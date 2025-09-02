@@ -8,7 +8,14 @@ initializeDB()
 app.use(express.json())
 const port = process.env.PORT || 8000
 
+const cors = require("cors");
+const corsOptions = {
+  origin: "*",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
 
+app.use(cors(corsOptions));
 
 // BE4.1_CW
 
