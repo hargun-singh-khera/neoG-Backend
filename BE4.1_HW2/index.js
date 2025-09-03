@@ -138,8 +138,8 @@ app.get("/hotels/category/:hotelCategory", async (req, res) => {
 
 async function createHotel(newHotel) {
     try {
-        const hotel = Hotel(newHotel)
-        return hotel.save()        
+        const hotel = new Hotel(newHotel)
+        return await hotel.save()        
     } catch (error) {
         throw error
     }
