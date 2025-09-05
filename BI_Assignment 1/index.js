@@ -1,12 +1,19 @@
 const express = require("express")
+const cors = require("cors")
 const app = express()
 
 const { connectDB } = require("./db/db.connect.js")
 const Event = require("./models/event.models")
 const Speaker = require("./models/speakers.model")
 
+const corsOptions = {
+  origin: "*",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
 
 app.use(express.json())
+app.use(cors(corsOptions))
 connectDB()
 
 require("dotenv").config()
@@ -30,7 +37,7 @@ async function readEvents() {
 app.get("/events", async (req, res) => {
     try {
         const events = await readEvents()
-        return events
+        res.status(200).json(events)
     } catch (error) {
         res.status(500).json({error: "Failed to fetch events."})        
     }
