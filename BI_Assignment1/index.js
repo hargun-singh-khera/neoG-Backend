@@ -3,8 +3,8 @@ const cors = require("cors")
 const app = express()
 
 const { connectDB } = require("./db/db.connect.js")
-const Event = require("./models/event.models")
-const Speaker = require("./models/speakers.model")
+const Event = require("./models/event.models.js")
+const Speaker = require("./models/speakers.model.js")
 
 const corsOptions = {
   origin: "*",
