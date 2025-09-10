@@ -1,6 +1,8 @@
 const express = require("express")
 const app = express()
+
 require("dotenv").config()
+const cors = require("cors")
 const Product = require("./models/product.model.js")
 const Category = require("./models/category.model.js")
 
@@ -94,17 +96,17 @@ app.get("/api/categories/:categoryId", async (req, res) => {
     }
 })
 
-app.get("/api/orders", (req, res) => {
+// app.get("/api/orders", (req, res) => {
 
-})
+// })
 
-app.get("/api/cart", (req, res) => {
+// app.get("/api/cart", (req, res) => {
     
-})
+// })
 
-app.get("/api/wishlists", (req, res) => {
+// app.get("/api/wishlists", (req, res) => {
 
-})
+// })
 
 app.listen(port, () => {
     console.log("Server is running on port " + port)
