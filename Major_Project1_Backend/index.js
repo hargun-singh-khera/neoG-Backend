@@ -66,6 +66,24 @@ app.post("/api/products", async (req, res) => {
     }
 })
 
+async function fetchProductsByCategory(category) {
+    try {
+        const products = await Product.find({category: category})   
+        return products     
+    } catch (error) {
+        throw error
+    }
+}
+
+app.get("/api/products/category/:category", async (req, res) => {
+    try {
+        const products = await fetchProductsByCategory(req.params.category)
+        res.status(200).json(products)
+    } catch (error) {
+        res.status(500).json({error: "Failed to fetch products by category."})
+    }
+})
+
 async function fetchProductById(productId) {
     try {
         const product = await Product.findById(productId)

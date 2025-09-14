@@ -28,8 +28,8 @@ const productSchema = new mongoose.Schema({
         required: true,
     },
     category: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Category",
+        type: String,
+        enum: ["men", "women", "kids"],
         required: true,
     },
     size: [{
