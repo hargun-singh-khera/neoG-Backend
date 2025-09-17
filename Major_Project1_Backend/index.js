@@ -9,6 +9,7 @@ const Wishlist = require("./models/wishlist.model.js")
 const Cart = require("./models/cart.model.js")
 
 const { connectDB } = require("./db/db.connect.js")
+const User = require("./models/user.model.js")
 
 const port = process.env.PORT || 8000
 
@@ -160,9 +161,9 @@ app.get("/api/categories/:categoryId", async (req, res) => {
 
 // })
 
-async function addProductToCart(userId, productId) {
+async function addProductToCart(cartData) {
     try {
-        const newCartItem = new Cart({productId, userId})
+        const newCartItem = new Cart(cartData)
         return await newCartItem.save()
     } catch (error) {
         throw error
@@ -172,7 +173,8 @@ async function addProductToCart(userId, productId) {
 app.post("/api/cart/:userId/:productId", async (req, res) => {
     try {
         const { userId, productId } = req.params
-        const newCartItem = await addProductToCart(userId, productId)
+        const { quantity } = req.body
+        const newCartItem = await addProductToCart({userId, productId, quantity})
         res.status(201).json({message: "Product added to cart successfully.", newCartItem})
     } catch (error) {
         res.status(500).json({error: "Failed to add product to cart."})
@@ -231,6 +233,24 @@ app.get("/api/wishlists/:userId", async (req, res) => {
         res.status(200).json(wishlistItems)
     } catch (error) {
         res.status(500).json({error: "Failed to fetch wishlist items by userId."})
+    }
+})
+
+async function addUser(userData) {
+    try {
+        const user = new User(userData)
+        return await user.save()
+    } catch (error) {
+        throw error
+    }
+}
+
+app.post("/api/users", async (req, res) => {
+    try {
+        const user = await addUser(req.body)
+        res.status(201).json({message: "User added successfully", user})
+    } catch (error) {
+        res.status(500).json({error: "Failed to add user."})
     }
 })
 
