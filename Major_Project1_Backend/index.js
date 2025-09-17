@@ -190,7 +190,7 @@ async function fetchCartProductsByUser(userId) {
     }
 }
 
-app.get("/api/cart", async (req, res) => {
+app.get("/api/cart/:userId", async (req, res) => {
     try {
         const cartItems = await fetchCartProductsByUser(req.params.userId)
         res.status(200).json(cartItems)
