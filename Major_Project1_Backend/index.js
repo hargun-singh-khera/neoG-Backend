@@ -200,6 +200,26 @@ app.get("/api/cart/:userId", async (req, res) => {
     }
 })
 
+
+async function removeCartItem(userId, productId) {
+    try {
+        return await Cart.deleteOne({userId, productId})        
+    } catch (error) {
+        throw error
+    }
+}
+
+app.delete("/api/cart/:userId/:productId", async (req, res) => {
+    try {
+        const { userId, productId } = req.params
+        await removeCartItem(userId, productId)
+        res.status(200).json({message: "Cart item removed successfully."})
+    } catch (error) {
+        res.status(500).json({error: "Failed to remove cart item."})
+    }
+})
+
+
 async function addProductToWishlist(userId, productId) {
     try {
         const newWishListItem = new Wishlist({productId, userId})
@@ -216,6 +236,24 @@ app.post("/api/wishlists/:userId/:productId", async (req, res) => {
         res.status(201).json({message: "Product added to wishlist successfully.", newWishListItem})
     } catch (error) {
         res.status(500).json({error: "Failed to add product to wishlist."})
+    }
+})
+
+async function removeWishlistItem (userId, productId) {
+    try {
+        return await Wishlist.deleteOne({userId, productId})        
+    } catch (error) {
+        throw error
+    }
+}
+
+app.delete("/api/wishlists/:userId/:productId", async (req, res) => {
+    try {
+        const { userId, productId } = req.params
+        await removeWishlistItem(userId, productId)
+        res.status(200).json({message: "Wishlist item removed successfully."})
+    } catch (error) {
+        res.status(500).json({error: "Failed to remove wishlist item."})
     }
 })
 
