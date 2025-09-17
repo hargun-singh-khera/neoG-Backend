@@ -173,8 +173,8 @@ async function addProductToCart(cartData) {
 app.post("/api/cart/:userId/:productId", async (req, res) => {
     try {
         const { userId, productId } = req.params
-        const { quantity } = req.body
-        const newCartItem = await addProductToCart({userId, productId, quantity})
+        // const { quantity } = req.body
+        const newCartItem = await addProductToCart({userId, productId, quantity: req.body?.quantity})
         res.status(201).json({message: "Product added to cart successfully.", newCartItem})
     } catch (error) {
         res.status(500).json({error: "Failed to add product to cart."})
@@ -184,6 +184,7 @@ app.post("/api/cart/:userId/:productId", async (req, res) => {
 async function fetchCartProductsByUser(userId) {
     try {
         const cartItems = await Cart.find({userId}).populate("productId")
+        console.log("cartItems", cartItems)
         return cartItems   
     } catch (error) {
         throw error        
