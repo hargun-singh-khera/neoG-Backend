@@ -184,7 +184,7 @@ app.post("/api/cart/:userId/:productId", async (req, res) => {
 async function fetchCartProductsByUser(userId) {
     try {
         const cartItems = await Cart.find({userId}).populate("productId")
-        return await cartItems.save()   
+        return cartItems   
     } catch (error) {
         throw error        
     }
