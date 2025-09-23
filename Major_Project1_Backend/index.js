@@ -10,6 +10,7 @@ const Cart = require("./models/cart.model.js")
 
 const { connectDB } = require("./db/db.connect.js")
 const User = require("./models/user.model.js")
+const { default: mongoose } = require("mongoose")
 
 const port = process.env.PORT || 8000
 
@@ -29,7 +30,8 @@ app.get("/", (req, res) => {
 
 async function fetchProducts() {
     try {   
-        const products = await Product.find()
+        const wishlistedProducts = (await Wishlist.find()).map(product => product.productId.toString())
+        const products = (await Product.find()).map(product => ({...product._doc, isWishlisted: wishlistedProducts.includes(product.id.toString())}))
         return products        
     } catch (error) {
         throw error
@@ -239,20 +241,20 @@ app.post("/api/wishlists/:userId/:productId", async (req, res) => {
     }
 })
 
-async function removeWishlistItem (userId, productId) {
+async function removeWishlistItem (wishlistId) {
     try {
-        return await Wishlist.deleteOne({userId, productId})        
+        return await Wishlist.findByIdAndDelete(wishlistId)      
     } catch (error) {
         throw error
     }
 }
 
-app.delete("/api/wishlists/:userId/:productId", async (req, res) => {
+app.delete("/api/wishlists/:wishlistId", async (req, res) => {
     try {
-        const { userId, productId } = req.params
-        await removeWishlistItem(userId, productId)
+        await removeWishlistItem(req.params.wishlistId)
         res.status(200).json({message: "Wishlist item removed successfully."})
     } catch (error) {
+        console.log("Error:", error)
         res.status(500).json({error: "Failed to remove wishlist item."})
     }
 })
