@@ -98,7 +98,10 @@ async function fetchProductById(productId) {
 
 app.get("/api/products/:productId", async (req, res) => {
     try {
-        const product = await fetchProductById(req.params.productId)
+        const wishlistedProducts = (await Wishlist.find()).map(product => product.productId.toString())
+        // return products        
+        let product = await fetchProductById(req.params.productId)
+        product = {...product._doc, isWishlisted: wishlistedProducts.includes(product.id.toString())}
         res.status(200).json(product)
     } catch (error) {
         res.status(500).json({error: "Failed to fetch product by Id."})
