@@ -31,7 +31,8 @@ app.get("/", (req, res) => {
 async function fetchProducts() {
     try {   
         const wishlistedProducts = (await Wishlist.find()).map(product => product.productId.toString())
-        const products = (await Product.find()).map(product => ({...product._doc, isWishlisted: wishlistedProducts.includes(product.id.toString())}))
+        const cartProducts = (await Cart.find()).map(product => product.productId.toString())
+        const products = (await Product.find()).map(product => ({...product._doc, discountedPrice: Math.round(product.price * (100-product.discount)/100), isWishlisted: wishlistedProducts.includes(product.id.toString()), isAddedToCart: cartProducts.includes(product.id.toString())}))
         return products        
     } catch (error) {
         throw error
@@ -98,10 +99,10 @@ async function fetchProductById(productId) {
 
 app.get("/api/products/:productId", async (req, res) => {
     try {
-        const wishlistedProducts = (await Wishlist.find()).map(product => product.productId.toString())
-        // return products        
+        const wishlistedProducts = (await Wishlist.find()).map(product => product.productId.toString())   
+        const cartProducts = (await Cart.find()).map(product => product.productId.toString())     
         let product = await fetchProductById(req.params.productId)
-        product = {...product._doc, isWishlisted: wishlistedProducts.includes(product.id.toString())}
+        product = {...product._doc, discountedPrice: Math.round(product.price * (100-product.discount)/100), isWishlisted: wishlistedProducts.includes(product.id.toString()), isAddedToCart: cartProducts.includes(product.id.toString())}
         res.status(200).json(product)
     } catch (error) {
         res.status(500).json({error: "Failed to fetch product by Id."})
@@ -178,7 +179,6 @@ async function addProductToCart(cartData) {
 app.post("/api/cart/:userId/:productId", async (req, res) => {
     try {
         const { userId, productId } = req.params
-        // const { quantity } = req.body
         const newCartItem = await addProductToCart({userId, productId, quantity: req.body?.quantity})
         res.status(201).json({message: "Product added to cart successfully.", newCartItem})
     } catch (error) {
@@ -227,6 +227,10 @@ app.delete("/api/cart/:userId/:productId", async (req, res) => {
 
 async function addProductToWishlist(userId, productId) {
     try {
+        const existingWishlistItem = await Wishlist.findOne({userId, productId})
+        if(existingWishlistItem) {
+            throw new Error("Product already exists in wishlist.")
+        }
         const newWishListItem = new Wishlist({productId, userId})
         return await newWishListItem.save()
     } catch (error) {
