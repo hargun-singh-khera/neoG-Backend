@@ -10,7 +10,6 @@ const Cart = require("./models/cart.model.js")
 
 const { connectDB } = require("./db/db.connect.js")
 const User = require("./models/user.model.js")
-const { default: mongoose } = require("mongoose")
 
 const port = process.env.PORT || 8000
 
@@ -163,10 +162,6 @@ app.get("/api/categories/:categoryId", async (req, res) => {
     }
 })
 
-// app.get("/api/orders", (req, res) => {
-
-// })
-
 async function addProductToCart(cartData) {
     try {
         const newCartItem = new Cart(cartData)
@@ -179,7 +174,11 @@ async function addProductToCart(cartData) {
 app.post("/api/cart/:userId/:productId", async (req, res) => {
     try {
         const { userId, productId } = req.params
-        const newCartItem = await addProductToCart({userId, productId, quantity: req.body?.quantity})
+        // const existingCartItem = await Cart.findOne({userId, productId})
+        // if(existingCartItem) {
+        //     throw new Error("Product already exists in cart.")
+        // }
+        const newCartItem = await (await addProductToCart({userId, productId, quantity: req.body?.quantity})).populate("productId")
         res.status(201).json({message: "Product added to cart successfully.", newCartItem})
     } catch (error) {
         res.status(500).json({error: "Failed to add product to cart."})
@@ -201,6 +200,7 @@ app.get("/api/cart/:userId", async (req, res) => {
         const cartItems = await fetchCartProductsByUser(req.params.userId)
         res.status(200).json(cartItems)
     } catch (error) {
+        // console.log(error)
         res.status(500).json({error: "Failed to fetch cart items by userId."})
     }
 })
