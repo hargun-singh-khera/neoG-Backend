@@ -101,7 +101,7 @@ app.get("/api/products/:productId", async (req, res) => {
         const wishlistedProducts = (await Wishlist.find()).map(product => product.productId.toString())   
         const cartProducts = (await Cart.find()).map(product => product.productId.toString())     
         let product = await fetchProductById(req.params.productId)
-        product = {...product._doc, discountedPrice: Math.round(product.price * (100-product.discount)/100), isWishlisted: wishlistedProducts.includes(product.id.toString()), isAddedToCart: cartProducts.includes(product.id.toString())}
+        product = {...product._doc, discountedPrice: Math.floor(product.price * (100-product.discount)/100), isWishlisted: wishlistedProducts.includes(product.id.toString()), isAddedToCart: cartProducts.includes(product.id.toString())}
         res.status(200).json(product)
     } catch (error) {
         res.status(500).json({error: "Failed to fetch product by Id."})
@@ -189,6 +189,7 @@ async function fetchCartProductsByUser(userId) {
     try {
         const cartItems = await Cart.find({userId}).populate("productId")
         console.log("cartItems", cartItems)
+
         return cartItems   
     } catch (error) {
         throw error        
