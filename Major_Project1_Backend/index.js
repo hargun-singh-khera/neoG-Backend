@@ -174,13 +174,16 @@ async function addProductToCart(cartData) {
 app.post("/api/cart/:userId/:productId", async (req, res) => {
     try {
         const { userId, productId } = req.params
-        // const existingCartItem = await Cart.findOne({userId, productId})
-        // if(existingCartItem) {
-        //     throw new Error("Product already exists in cart.")
-        // }
-        const newCartItem = await (await addProductToCart({userId, productId, quantity: req.body?.quantity})).populate("productId")
+        const { size } = req.body || {}
+        // console.log("size", size)
+        const existingCartItem = await Cart.findOne({userId, productId, size})
+        if(existingCartItem) {
+            throw new Error("Product already exists in cart.")
+        }
+        const newCartItem = await (await addProductToCart({userId, productId, quantity: req.body?.quantity, size})).populate("productId")
         res.status(201).json({message: "Product added to cart successfully.", newCartItem})
     } catch (error) {
+        console.log("error", error.message)
         res.status(500).json({error: "Failed to add product to cart."})
     }
 })
