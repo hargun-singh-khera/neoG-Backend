@@ -10,6 +10,7 @@ const Cart = require("./models/cart.model.js")
 
 const { connectDB } = require("./db/db.connect.js")
 const User = require("./models/user.model.js")
+const Address = require("./models/address.model.js")
 
 const port = process.env.PORT || 8000
 
@@ -199,6 +200,33 @@ async function fetchCartProductsByUser(userId) {
     }
 }
 
+
+// async function updateCartProduct (userId, productId, quantity, size) {
+//     try {
+//         const cartProduct = await Cart.findOne({ userId, productId, size })
+//         if(!cartProduct) {
+//             throw new Error("Product not found in cart.")
+//         }
+//         const updatedCartProduct = await Cart.updateOne({ userId, productId, quantity, size })
+//     } catch (error) {
+//         throw error
+//     }
+// }
+
+// app.post("/api/cart/update/:userId/:productId", async (req, res) => {
+//     try {
+//         const { userId, productId } = req.params
+//         const { quantity, size } = req.body
+//         const updatedCartProduct = await updateCartProduct(
+//             { userId, productId }, 
+//             { $set: {quantity, size} }
+//         )
+//         res.status(200).json({ message: "Cart Product updated successfully.", updatedCartProduct})
+//     } catch (error) {
+//         res.status(500).json({ error: "Failed to update cart product."})
+//     }
+// })
+
 app.get("/api/cart/:userId", async (req, res) => {
     try {
         const cartItems = await fetchCartProductsByUser(req.params.userId)
@@ -306,6 +334,79 @@ app.post("/api/users", async (req, res) => {
         res.status(500).json({error: "Failed to add user."})
     }
 })
+
+async function addAddress(addressData) {
+    try {
+        const address = new Address(addressData)
+        return await address.save()
+    } catch (error) {
+        throw error
+    }
+}
+
+app.post("/api/address", async (req, res) => {
+    try {
+        const address = await addAddress(req.body)
+        res.status(201).json({message: "Address added successfully", address})
+    } catch (error) {
+        res.status(500).json({ message: "Failed to add address." })        
+    }
+})
+
+async function fetchAddresses() {
+    try {
+        const addresses = await Address.find()
+        return addresses        
+    } catch (error) {
+        throw error
+    }
+}
+
+app.get("/api/address", async (req, res) => {
+    try {
+        const addresses = await fetchAddresses()
+        res.status(200).json({ message: "Addresses fetched successfully", addresses})
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch addresses."})
+    }
+})
+
+async function updateAddress(addressId, addressData) {
+    try {
+        const updatedAddress = await Address.findByIdAndUpdate(addressId, addressData, { new: true })
+        return updatedAddress       
+    } catch (error) {
+        throw error
+    }
+}
+
+app.post("/api/update/address/:addressId", async (req, res) => {
+    try {
+        const updatedAddress = await updateAddress(req.params.addressId, req.body)
+        res.status(200).json({ message: "Address updated successfully", updatedAddress})
+    } catch (error) {
+        res.status(500).json({ message: "Failed to update address"})        
+    }
+})
+
+async function deleteAddress(addressId) {
+    try {
+        const address = await Address.findByIdAndDelete(addressId)
+        return address
+    } catch (error) {
+        throw error
+    }
+}
+
+app.delete("/api/address/:addressId", async(req, res) => {
+    try {
+        const deletedAddress = await deleteAddress(req.params.addressId)
+        res.status(200).json({ message: "Address deleted successfully", deletedAddress})
+    } catch (error) {
+        res.status(500).json({ message: "Failed to delete address."})        
+    }
+})
+
 
 app.listen(port, () => {
     console.log("Server is running on port " + port)
