@@ -371,6 +371,24 @@ app.get("/api/address", async (req, res) => {
     }
 })
 
+async function fetchAddressById(addressId) {
+    try {
+        const addresses = await Address.findById(addressId)
+        return addresses        
+    } catch (error) {
+        throw error
+    }
+}
+
+app.get("/api/address/:addressId", async (req, res) => {
+    try {
+        const address = await fetchAddressById(req.params.addressId)
+        res.status(200).json({ message: "Address fetched successfully", address})
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch address."})
+    }
+})
+
 async function updateAddress(addressId, addressData) {
     try {
         const updatedAddress = await Address.findByIdAndUpdate(addressId, addressData, { new: true })
