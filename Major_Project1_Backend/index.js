@@ -11,6 +11,7 @@ const Cart = require("./models/cart.model.js")
 const { connectDB } = require("./db/db.connect.js")
 const User = require("./models/user.model.js")
 const Address = require("./models/address.model.js")
+const Orders = require("./models/orders.model.js")
 
 const port = process.env.PORT || 8000
 
@@ -425,6 +426,43 @@ app.delete("/api/address/:addressId", async(req, res) => {
     }
 })
 
+async function fetchOrders() {
+    try {
+        const orders = await Orders.find()
+        return orders        
+    } catch (error) {
+        throw error
+    }
+}
+
+app.get("/orders", async (req, res) => {
+    try {
+        const orders = await fetchOrders()
+        res.status(200).json({ message: "Orders fetched successfully", orders })
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch orders"})
+    }
+})
+
+async function placeOrder(orderData, productId, status) {
+    console.log("orderData", orderData, "productId", productId)
+    try {
+        const order = new Orders({...orderData, productId, status})
+        return await order.save()
+    } catch (error) {
+        throw error
+    }
+}
+
+app.post("/order/:productId", async (req, res) => {
+    try {
+        const order = await placeOrder(req.body, req.params.productId, "completed")
+        res.status(201).json({ message: "Order placed succesfully", order })
+    } catch (error) {
+        console.log("Order place error", error)
+        res.status(500).json({ message: "Failed to place order."})
+    }
+})
 
 app.listen(port, () => {
     console.log("Server is running on port " + port)
