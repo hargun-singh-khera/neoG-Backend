@@ -428,7 +428,7 @@ app.delete("/api/address/:addressId", async(req, res) => {
 
 async function fetchOrders() {
     try {
-        const orders = await Orders.find()
+        const orders = await Orders.find().populate("productId").populate("addressId")
         return orders        
     } catch (error) {
         throw error
