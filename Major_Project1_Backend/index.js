@@ -435,7 +435,7 @@ async function fetchOrders() {
     }
 }
 
-app.get("/orders", async (req, res) => {
+app.get("/api/orders", async (req, res) => {
     try {
         const orders = await fetchOrders()
         res.status(200).json({ message: "Orders fetched successfully", orders })
@@ -444,19 +444,20 @@ app.get("/orders", async (req, res) => {
     }
 })
 
-async function placeOrder(orderData, productId, status) {
-    console.log("orderData", orderData, "productId", productId)
+async function placeOrder(orderData, productId, addressId) {
+    console.log("orderData", orderData, "productId", productId, "addressId", addressId)
     try {
-        const order = new Orders({...orderData, productId, status})
+        const order = new Orders({...orderData, productId, addressId})
         return await order.save()
     } catch (error) {
         throw error
     }
 }
 
-app.post("/order/:productId", async (req, res) => {
+app.post("/api/order/:productId/:addressId", async (req, res) => {
     try {
-        const order = await placeOrder(req.body, req.params.productId, "completed")
+        const { productId, addressId } = req.params
+        const order = await placeOrder(req.body, productId, addressId)
         res.status(201).json({ message: "Order placed succesfully", order })
     } catch (error) {
         console.log("Order place error", error)

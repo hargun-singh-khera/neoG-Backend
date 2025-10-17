@@ -19,10 +19,15 @@ const ordersSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    status: {
-        type: String,
-        enum: ["pending", "completed"],
-        default: "pending",
+    // status: {
+    //     type: String,
+    //     enum: ["pending", "completed"],
+    //     default: "pending",
+    // },
+    addressId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Address",
+        required: true,
     }
 }, { timestamps: true })
 
