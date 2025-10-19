@@ -428,7 +428,7 @@ app.delete("/api/address/:addressId", async(req, res) => {
 
 async function fetchOrders() {
     try {
-        const orders = await Orders.find().populate("productId").populate("addressId")
+        const orders = await Orders.find().populate("product.productId").populate("addressId")
         return orders        
     } catch (error) {
         throw error
@@ -444,20 +444,19 @@ app.get("/api/orders", async (req, res) => {
     }
 })
 
-async function placeOrder(orderData, productId, addressId) {
-    console.log("orderData", orderData, "productId", productId, "addressId", addressId)
+async function placeOrder(orderData, addressId) {
+    console.log("orderData", orderData, "addressId", addressId)
     try {
-        const order = new Orders({...orderData, productId, addressId})
+        const order = new Orders({...orderData,  addressId})
         return await order.save()
     } catch (error) {
         throw error
     }
 }
 
-app.post("/api/order/:productId/:addressId", async (req, res) => {
+app.post("/api/order/:addressId", async (req, res) => {
     try {
-        const { productId, addressId } = req.params
-        const order = await placeOrder(req.body, productId, addressId)
+        const order = await placeOrder(req.body, req.params.addressId)
         res.status(201).json({ message: "Order placed succesfully", order })
     } catch (error) {
         console.log("Order place error", error)
