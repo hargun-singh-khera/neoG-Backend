@@ -257,6 +257,13 @@ app.delete("/api/cart/:userId/:productId", async (req, res) => {
     }
 })
 
+async function emptyCart() {
+    try {
+        await Cart.deleteMany({})
+    } catch (error) {
+        throw error
+    }
+}
 
 async function addProductToWishlist(userId, productId) {
     try {
@@ -448,7 +455,10 @@ async function placeOrder(orderData, addressId) {
     console.log("orderData", orderData, "addressId", addressId)
     try {
         const order = new Orders({...orderData,  addressId})
-        return await order.save()
+        const savedOrder = await order.save()
+        await savedOrder.populate("product.productId")
+        await savedOrder.populate("addressId")
+        return savedOrder 
     } catch (error) {
         throw error
     }
@@ -457,6 +467,7 @@ async function placeOrder(orderData, addressId) {
 app.post("/api/order/:addressId", async (req, res) => {
     try {
         const order = await placeOrder(req.body, req.params.addressId)
+        await emptyCart()
         res.status(201).json({ message: "Order placed succesfully", order })
     } catch (error) {
         console.log("Order place error", error)
