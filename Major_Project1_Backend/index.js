@@ -452,7 +452,7 @@ app.get("/api/orders", async (req, res) => {
 })
 
 async function placeOrder(orderData, addressId) {
-    // console.log("orderData", orderData, "addressId", addressId)
+    console.log("orderData", orderData, "addressId", addressId)
     try {
         const order = new Orders({...orderData,  addressId})
         const savedOrder = await order.save()
