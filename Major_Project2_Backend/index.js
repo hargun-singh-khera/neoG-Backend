@@ -8,6 +8,7 @@ const { connectDB } = require("./db/db.connect.js")
 const SalesAgent = require("./models/agent.models.js")
 const Lead = require("./models/lead.models.js")
 const Comment = require("./models/comment.models.js")
+const Tag = require("./models/tag.models.js")
 
 
 const port = process.env.PORT || 8000
@@ -91,7 +92,7 @@ app.post("/api/leads", async (req, res) => {
 const getAllLeads = async (filters) => {
     try {
         console.log("filters", filters)
-        const leads = await Lead.find(filters).populate("salesAgent")
+        const leads = await Lead.find(filters).populate("salesAgent").populate("tags")
         return leads
     } catch (error) {
         throw error
@@ -215,6 +216,43 @@ const getLeadsClosedLastWeek = async () => {
         throw error
     }
 }
+
+const addTag = async (data) => {
+    try {
+        const tag = new Tag(data)
+        return await tag.save()        
+    } catch (error) {
+        throw error
+    }
+}
+
+app.post("/api/tags", async (req, res) => {
+    try {
+        const tag = await addTag(req.body)
+        res.status(201).json({ message: "Tag added successfully", tag })
+    } catch (error) {
+        res.status(500).json({ error: "Failed to add tag." })
+    }
+})
+
+const getTags = async () => {
+    try {
+        const tags = await Tag.find()
+        return tags
+    } catch (error) {
+        throw error
+    }
+}
+
+app.get("/api/tags", async (req, res) => {
+    try {
+        const tags = await getTags()
+        res.status(200).json({ message: "Tags fetched successfully", tags })
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch tags." })
+    }
+})
+
 
 app.get("/api/report/last-week", async (req, res) => {
     try {

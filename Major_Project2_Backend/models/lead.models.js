@@ -22,7 +22,10 @@ const leadSchema = new mongoose.Schema({
         default: "New",
     },
     tags: {
-        type: [String],
+        type: [{
+            type: mongoose.Types.ObjectId,
+            ref: "Tags",
+        }],
     },
     timeToClose: {
         type: Number,
