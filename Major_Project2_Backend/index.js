@@ -76,14 +76,16 @@ const createLead = async (data) => {
 
 app.post("/api/leads", async (req, res) => {
     try {
-        const { salesAgent } = req.body
-        const salesAgentExists = await SalesAgent.findById(salesAgent)
-        if(!salesAgentExists) {
-            return res.status(404).json({ error: "Sales agent not found." })
-        }
+        // const { salesAgent } = req.body
+        // const salesAgentExists = await SalesAgent.findById(salesAgent)
+        // if(!salesAgentExists) {
+        //     return res.status(404).json({ error: "Sales agent not found." })
+        // }
+        console.log(req.body)
         const lead = await createLead(req.body)
         res.status(201).json({ message: "Lead created successfully", lead })
     } catch (error) {
+        console.log("error", error)
         res.status(500).json({ error: "Failed to create lead." })
     }
 })
@@ -93,6 +95,7 @@ const getAllLeads = async (filters) => {
     try {
         console.log("filters", filters)
         const leads = await Lead.find(filters).populate("salesAgent").populate("tags")
+        console.log("leads", leads)
         return leads
     } catch (error) {
         throw error
@@ -102,7 +105,7 @@ const getAllLeads = async (filters) => {
 app.get("/api/leads", async (req, res) => {
     try {
         console.log("req.query", req.query)
-        const { salesAgent, status, tags, source } = req.query
+        // const { salesAgent, status, tags, source } = req.query
         // const filters = {}
         // if(salesAgent) filters.salesAgent = salesAgent
         // if(status) filters.status = status
