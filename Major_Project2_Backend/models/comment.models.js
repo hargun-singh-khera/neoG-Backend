@@ -9,7 +9,7 @@ const commentSchema = new mongoose.Schema({
     },
     author: {
         type: mongoose.Types.ObjectId,
-        ref: "Agent",
+        ref: "SalesAgent",
         required: [true, "Author is required"],
     },
     commentText: {

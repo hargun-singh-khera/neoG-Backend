@@ -202,7 +202,7 @@ app.post("/api/leads/:id/comments", async (req, res) => {
 
 const getAllCommentByLead = async (lead) => {
     try {
-        const comments = await Comment.find({ lead })
+        const comments = await Comment.find({ lead }).populate("author")
         return comments
     } catch (error) {
         console.log("Error", error)
