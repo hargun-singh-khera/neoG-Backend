@@ -63,7 +63,6 @@ app.get("/api/agents", async (req, res) => {
 })
 
 
-
 // Lead API
 const createLead = async (data) => {
     try {
@@ -117,6 +116,26 @@ app.get("/api/leads", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch leads." })
     }
 })
+
+
+const getLeadById = async (leadId) => {
+    try {
+        const lead = await Lead.findById(leadId).populate("salesAgent").populate("tags")
+        return lead        
+    } catch (error) {
+        throw error
+    }
+}
+
+app.get("/api/lead/:id", async (req, res) => {
+    try {
+        const lead = await getLeadById(req.params.id)
+        res.status(200).json({ message: "Lead fetched successfully", lead })
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch lead."})
+    }
+})
+
 
 const updateLead = async (leadId, data) => {
     try {
