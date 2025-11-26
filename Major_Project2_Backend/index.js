@@ -149,12 +149,8 @@ const updateLead = async (leadId, data) => {
 
 app.post("/api/leads/:id", async (req, res) => {
     try {
-        const { salesAgent } = req.body
-        const salesAgentExists = await SalesAgent.findById(salesAgent)
-        if (!salesAgentExists) { 
-            return res.status(404).json({ error: "Sales agent not found." })
-        }
         const updatedLead = await updateLead(req.params.id, req.body)
+        console.log("updatedLead", updatedLead)
         res.status(200).json({ message: "Lead updated successfully", updatedLead })
     } catch (error) {
         res.status(500).json({ error: "Failed to update lead." })
@@ -183,8 +179,10 @@ app.delete("/api/leads/:id", async (req, res) => {
 // Comments API
 const addLeadComment = async (data, lead) => {
     try {
+        console.log("{lead, ...data}", {lead, ...data})
         const comment = new Comment({lead, ...data})
-        return await comment.save()
+        await comment.save()
+        return await comment.populate("author")
     } catch (error) {
         throw error
     }
@@ -194,8 +192,10 @@ app.post("/api/leads/:id/comments", async (req, res) => {
     try {
         console.log("req.body", req.body, req.params.id)
         const comment = await addLeadComment(req.body, req.params.id)
+        console.log("comment", comment)
         res.status(201).json({ message: "Comment added successfully", comment })
     } catch (error) {
+        console.log("error", error)
         res.status(500).json({ error: "Failed to add a comment." })
     }
 })
