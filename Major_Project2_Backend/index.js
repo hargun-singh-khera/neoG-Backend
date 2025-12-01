@@ -271,7 +271,7 @@ const getLeadsClosedLastWeek = async () => {
             }
         })
         console.log("leads", leads)
-        return leads
+        return leads.length
     } catch (error) {
         throw error
     }
