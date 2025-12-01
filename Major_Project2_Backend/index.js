@@ -220,24 +220,6 @@ app.get("/api/leads/:id/comments", async (req, res) => {
 })
 
 
-// Reporting API
-const getLeadsClosedLastWeek = async () => {
-    try {
-        const sevenDaysAgo = new Date()
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-        const leads = await Lead.find({ 
-            status: "Closed",
-            createdAt: {
-                $gte: sevenDaysAgo,
-                $lte: new Date(),
-            }
-        })
-        console.log("leads", leads)
-        return leads
-    } catch (error) {
-        throw error
-    }
-}
 
 const addTag = async (data) => {
     try {
@@ -275,6 +257,25 @@ app.get("/api/tags", async (req, res) => {
     }
 })
 
+
+// Reporting API
+const getLeadsClosedLastWeek = async () => {
+    try {
+        const sevenDaysAgo = new Date()
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+        const leads = await Lead.find({ 
+            status: "Closed",
+            updatedAt: {
+                $gte: sevenDaysAgo,
+                $lte: new Date(),
+            }
+        })
+        console.log("leads", leads)
+        return leads
+    } catch (error) {
+        throw error
+    }
+}
 
 app.get("/api/report/last-week", async (req, res) => {
     try {
