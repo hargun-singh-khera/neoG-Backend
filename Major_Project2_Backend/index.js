@@ -62,6 +62,23 @@ app.get("/api/agents", async (req, res) => {
     }
 })
 
+const deleteAgent = async (leadId) => {
+    try {
+        await SalesAgent.findByIdAndDelete(leadId)        
+    } catch (error) {
+        throw error
+    }
+}
+
+app.delete("/api/agents/:id", async (req, res) => {
+    try {
+        await deleteAgent(req.params.id)
+        res.status(200).json({ message: "Lead deleted successfully"})
+    } catch (error) {
+        res.status(500).json({ error: "Failed to delete lead."})
+    }
+})
+
 
 // Lead API
 const createLead = async (data) => {
@@ -285,6 +302,25 @@ app.get("/api/report/last-week", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch last week report." })
     }
 })
+
+// const getLeadsClosedByAgent = async (salesAgent) => {
+//     try {
+//         const leads = await Lead.find({ salesAgent: salesAgent, status: "Closed" })
+//         return leads.length
+//     } catch (error) {
+//         console.log("error", error)
+//         throw error
+//     }
+// }
+
+// app.get("/api/report/leads-closed-by-agent/:salesAgent", async (req, res) => {
+//     try {
+//         const leads = await getLeadsClosedByAgent(req.params.salesAgent)
+//         res.status(200).json({ message: "Leads closed by agent report fetched successfully.", leads })
+//     } catch (error) {
+//         res.status(500).json({ error: "Failed to fetch leads closed by sales agent"})
+//     }
+// })
 
 const getTotalLeadsInPipeline = async () => {
     try {
