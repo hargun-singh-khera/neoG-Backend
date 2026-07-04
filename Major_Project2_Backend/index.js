@@ -1,29 +1,75 @@
 const express = require("express")
-const app = express()
 
-require("dotenv").config()
 const cors = require("cors")
+const jwt = require("jsonwebtoken");
+require("dotenv").config()
 
 const { connectDB } = require("./db/db.connect.js")
 const SalesAgent = require("./models/agent.models.js")
 const Lead = require("./models/lead.models.js")
 const Comment = require("./models/comment.models.js")
-const Tag = require("./models/tag.models.js")
+const Tag = require("./models/tag.models.js");
+const { verifyJWT } = require("./middleware/index.js");
+const User = require("./models/user.model.js");
 
 
-const port = process.env.PORT || 8000
+const app = express()
+connectDB()
+app.use(express.json())
 
 const corsOptions = {
-    origin: "*",
+    origin: ["https://nexora-crm-mu.vercel.app", "http://localhost:5173"],
     credentials: true,
     optionSuccessStatus: 200,
 }
-
-
-connectDB()
-app.use(express.json())
 app.use(cors(corsOptions))
 
+app.get("/", (req, res) => {
+    res.send("Welcome to Nexora API")
+})
+
+// signup
+app.post("/auth/signup", async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: "All fields are required " })
+        }
+        const userExists = await User.findOne({ email })
+        if (userExists) {
+            return res.status(409).json({ message: "User already exists " })
+        }
+        const user = new User({ name, email, password })
+        await user.save()
+        return res.status(201).json({ message: "User registered successfully", user })
+    } catch (error) {
+        res.status(500).json({ error: "Failed to register user" })
+        console.log("Error while registering user", error.message)
+    }
+})
+
+// login
+app.post("/auth/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ message: "All fields are required " })
+        }
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(400).json({ message: "User not found " })
+        }
+        if (password === user.password) {
+            const token = jwt.sign({ userId: user._id, name: user.name, email }, process.env.JWT_SECRET, { expiresIn: "1d" })
+            return res.status(200).json({ message: "User logged in successfully", token })
+        } else {
+            return res.status(400).json({ message: "Invalid credentials " })
+        }
+    } catch (error) {
+        res.status(500).json({ error: "Failed to login " })
+        // console.log("Error while logging in user", error.message)
+    }
+})
 
 // Sales Agent API
 const createSalesAgent = async (data) => {
@@ -35,7 +81,7 @@ const createSalesAgent = async (data) => {
     }
 }
 
-app.post("/api/agents", async (req, res) => {
+app.post("/api/agents", verifyJWT, async (req, res) => {
     try {
         const salesAgent = await createSalesAgent(req.body)
         res.status(201).json({ message: "Sales agent created successfully", salesAgent })
@@ -53,7 +99,7 @@ const getAllSalesAgent = async () => {
     }
 }
 
-app.get("/api/agents", async (req, res) => {
+app.get("/api/agents", verifyJWT,  async (req, res) => {
     try {
         const salesAgent = await getAllSalesAgent()
         res.status(200).json({ message: "Sales agent fetched successfully.", salesAgent })
@@ -70,7 +116,7 @@ const deleteAgent = async (leadId) => {
     }
 }
 
-app.delete("/api/agents/:id", async (req, res) => {
+app.delete("/api/agents/:id", verifyJWT, async (req, res) => {
     try {
         await deleteAgent(req.params.id)
         res.status(200).json({ message: "Lead deleted successfully"})
@@ -90,7 +136,7 @@ const createLead = async (data) => {
     }
 }
 
-app.post("/api/leads", async (req, res) => {
+app.post("/api/leads", verifyJWT, async (req, res) => {
     try {
         // const { salesAgent } = req.body
         // const salesAgentExists = await SalesAgent.findById(salesAgent)
@@ -118,7 +164,7 @@ const getAllLeads = async (filters) => {
     }
 }
 
-app.get("/api/leads", async (req, res) => {
+app.get("/api/leads", verifyJWT, async (req, res) => {
     try {
         console.log("req.query", req.query)
         // const { salesAgent, status, tags, source } = req.query
@@ -144,7 +190,7 @@ const getLeadById = async (leadId) => {
     }
 }
 
-app.get("/api/lead/:id", async (req, res) => {
+app.get("/api/lead/:id", verifyJWT, async (req, res) => {
     try {
         const lead = await getLeadById(req.params.id)
         res.status(200).json({ message: "Lead fetched successfully", lead })
@@ -164,7 +210,7 @@ const updateLead = async (leadId, data) => {
     }
 }
 
-app.post("/api/leads/:id", async (req, res) => {
+app.post("/api/leads/:id", verifyJWT, async (req, res) => {
     try {
         const updatedLead = await updateLead(req.params.id, req.body)
         console.log("updatedLead", updatedLead)
@@ -182,7 +228,7 @@ const deleteLead = async (leadId) => {
     }
 }
 
-app.delete("/api/leads/:id", async (req, res) => {
+app.delete("/api/leads/:id", verifyJWT, async (req, res) => {
     try {
         await deleteLead(req.params.id)
         res.status(200).json({ message: "Lead deleted successfully." })
@@ -205,7 +251,7 @@ const addLeadComment = async (data, lead) => {
     }
 }
 
-app.post("/api/leads/:id/comments", async (req, res) => {
+app.post("/api/leads/:id/comments", verifyJWT, async (req, res) => {
     try {
         console.log("req.body", req.body, req.params.id)
         const comment = await addLeadComment(req.body, req.params.id)
@@ -227,7 +273,7 @@ const getAllCommentByLead = async (lead) => {
     }
 }
 
-app.get("/api/leads/:id/comments", async (req, res) => {
+app.get("/api/leads/:id/comments", verifyJWT, async (req, res) => {
     try {
         const comments = await getAllCommentByLead(req.params.id)
         res.status(200).json({ message: "Comments for leads fetched successfully.", comments })
@@ -247,7 +293,7 @@ const addTag = async (data) => {
     }
 }
 
-app.post("/api/tags", async (req, res) => {
+app.post("/api/tags", verifyJWT, async (req, res) => {
     try {
         const tag = await addTag(req.body)
         res.status(201).json({ message: "Tag added successfully", tag })
@@ -265,7 +311,7 @@ const getTags = async () => {
     }
 }
 
-app.get("/api/tags", async (req, res) => {
+app.get("/api/tags", verifyJWT, async (req, res) => {
     try {
         const tags = await getTags()
         res.status(200).json({ message: "Tags fetched successfully", tags })
@@ -294,7 +340,7 @@ const getLeadsClosedLastWeek = async () => {
     }
 }
 
-app.get("/api/report/last-week", async (req, res) => {
+app.get("/api/report/last-week", verifyJWT, async (req, res) => {
     try {
         const leads = await getLeadsClosedLastWeek()
         res.status(200).json({ message: "Last week lead report fetched successfully.", leads })
@@ -332,7 +378,7 @@ const getTotalLeadsInPipeline = async () => {
     }
 }
 
-app.get("/api/report/pipeline", async (req, res) => {
+app.get("/api/report/pipeline", verifyJWT, async (req, res) => {
     try {
         const leads = await getTotalLeadsInPipeline()
         res.status(200).json({ totalLeadsInPipeline: leads })
@@ -341,6 +387,7 @@ app.get("/api/report/pipeline", async (req, res) => {
     }
 })
 
+const port = process.env.PORT || 8000
 
 app.listen(port, () => {
     console.log("Server is running on port " + port)
