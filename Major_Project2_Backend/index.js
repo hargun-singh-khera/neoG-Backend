@@ -18,7 +18,7 @@ connectDB()
 app.use(express.json())
 
 const corsOptions = {
-    origin: ["https://nexora-crm-mu.vercel.app", "http://localhost:5173"],
+    origin: "*",
     credentials: true,
     optionSuccessStatus: 200,
 }
@@ -56,18 +56,20 @@ app.post("/auth/login", async (req, res) => {
             return res.status(400).json({ message: "All fields are required " })
         }
         const user = await User.findOne({ email })
+        console.log("user", user);
         if (!user) {
             return res.status(400).json({ message: "User not found " })
         }
         if (password === user.password) {
             const token = jwt.sign({ userId: user._id, name: user.name, email }, process.env.JWT_SECRET, { expiresIn: "1d" })
+            console.log("token", token);
             return res.status(200).json({ message: "User logged in successfully", token })
         } else {
-            return res.status(400).json({ message: "Invalid credentials " })
+            return res.status(401).json({ message: "Invalid credentials " })
         }
     } catch (error) {
         res.status(500).json({ error: "Failed to login " })
-        // console.log("Error while logging in user", error.message)
+        console.log("Error while logging in user", error.message)
     }
 })
 
