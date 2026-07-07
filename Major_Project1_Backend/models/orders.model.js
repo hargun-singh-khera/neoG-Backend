@@ -8,12 +8,12 @@ const ordersSchema = new mongoose.Schema({
             required: true,
         },
         quantity: {
-            type: Number, 
+            type: Number,
             default: 1,
         },
         size: {
             type: String,
-            enum: ["XS","S", "M", "L", "XL", "XXL"],
+            enum: ["XS", "S", "M", "L", "XL", "XXL"],
             required: true,
         },
         price: {
@@ -42,6 +42,11 @@ const ordersSchema = new mongoose.Schema({
     //     enum: ["pending", "completed"],
     //     default: "pending",
     // },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
     addressId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Address",
